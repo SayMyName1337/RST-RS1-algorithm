@@ -1,13 +1,14 @@
 import pandas as pd
 
-data = pd.DataFrame({'Прогноз погоды':['Пасмурно', 'Солнечно', 'Солнечно', 'Пасмурно', 'Пасмурно', 'Дождливо', 'Солнечно', 'Дождливо', 'Дождливо', 'Пасмурно'],
-                     'Влажность%':[87,80,80,75,75,80,80,80,85,87], 'Ветер':[False,True,True,True,True,False,True,False,False,False], 
-                     'Играть ли в гольф':[1,1,1,1,1,0,0,0,0,1]})
+df_path = 'D:\Python projects\RST-RS1-algorithm\golf.csv'
+data = pd.read_csv(df_path)
 
+
+print ('\n' + '[----------------------- DATASET -----------------------]')
 print (data)
 
-X = data[['Прогноз погоды', 'Влажность%', 'Ветер']]
-X_true = data[['Прогноз погоды', 'Влажность%', 'Ветер']][data['Играть ли в гольф'] == 1]
+X = data [['Outlook', 'Humidity%', 'Wind']] 
+X_true = data[['Outlook', 'Humidity%', 'Wind']][data['Play'] == 1]
 
 all_indexes = set(data.index)
 X_true_indexes = set(X_true.index)
@@ -42,8 +43,8 @@ def get_upper(elementary, X_true_indexes): #get an upper approximation
 def get_pos_rule(pos_dataframe): #get a rule to print only positive objects
     res = 'IF '
     for item in pos_dataframe.items():
-        if item[0] != 'Играть ли в гольф':
-            res += f'({item[0]}='
+        if item[0] != 'Play':
+            res += f'({item[0]} = '
             value = ''
             for l in range(len(item[1])):
                 if not value:
@@ -51,19 +52,19 @@ def get_pos_rule(pos_dataframe): #get a rule to print only positive objects
                 elif str(item[1][l]) in value:
                     pass
                 else:
-                    value += str(f'V{item[1][l]}')
+                    value += str(f' & {item[1][l]}')
             res += value
-            res += ')&'  
+            res += ')& '  
         else:
             res = res[:-1]
-            res += ' THEN "PLAY" = PLAY'
+            res += ' THEN DECISION "PLAY" = PLAY'
     return res
 
 def get_maybe_rule(maybe_dataframe): #get a rule to print objects are able to be positive
     res = 'IF '
     for item in maybe_dataframe.items():
-        if item[0] != 'Играть ли в гольф':
-            res += f'({item[0]}='
+        if item[0] != 'Play':
+            res += f'({item[0]} = '
             value = ''
             for l in range(len(item[1])):
                 if not value:
@@ -71,19 +72,19 @@ def get_maybe_rule(maybe_dataframe): #get a rule to print objects are able to be
                 elif str(item[1][l]) in value:
                     pass
                 else:
-                    value += str(f'V{item[1][l]}')
+                    value += str(f' V {item[1][l]}')
             res += value
             res += ')&'  
         else:
             res = res[:-1]
-            res += ' THEN "PLAY" = MAYBE PLAY'
+            res += ' THEN DECISION "PLAY" = MAYBE PLAY'
     return res
 
 def get_neg_rule(not_pos_dataframe): #get a rule to print only negative objects
     res = 'IF '
     for item in not_pos_dataframe.items():
-        if item[0] != 'Играть ли в гольф':
-            res += f'({item[0]}='
+        if item[0] != 'Play':
+            res += f'({item[0]} = '
             value = ''
             for l in range(len(item[1])):
                 if not value:
@@ -91,12 +92,12 @@ def get_neg_rule(not_pos_dataframe): #get a rule to print only negative objects
                 elif str(item[1][l]) in value:
                     pass
                 else:
-                    value += str(f'V{item[1][l]}')
+                    value += str(f' V {item[1][l]}')
             res += value
             res += ')&'  
         else:
             res = res[:-1]
-            res += ' THEN "PLAY" = DONT PLAY'
+            res += ' THEN DECISION "PLAY" = DON\'T PLAY'
     return res
 
 elementary = get_elementary_subsets(X)
@@ -104,22 +105,29 @@ elementary = get_elementary_subsets(X)
 lower_init, lower, all_lower = get_lower(elementary, X_true_indexes)
 upper_init, upper, all_upper = get_upper(elementary, X_true_indexes)
 
-approximation_rate = len(all_lower)/len(all_upper) #get an approximation rate
+# Calculating an approximation occuracy
+approximation_rate = round(len(all_lower) / len(all_upper), 3)
 
 POS_x = lower
-BOND_x = set(upper).difference(set(lower))
-not_POS_x = all_indexes.difference(set(all_upper))
+BND_X = set(upper).difference(set(lower))
+NEG_X = all_indexes.difference(set(all_upper))
 
-not_pos_dataframe = pd.DataFrame([data.loc[el] for el in not_POS_x], index=range(len(not_POS_x)))
+# Creating a dataframe for each region
+not_pos_dataframe = pd.DataFrame([data.loc[el] for el in NEG_X], index=range(len(NEG_X)))
 pos_dataframe = pd.DataFrame([data.loc[el] for el in POS_x], index=range(len(POS_x)))
-maybe_dataframe = pd.DataFrame([data.loc[el] for el in BOND_x], index=range(len(BOND_x)))
+maybe_dataframe = pd.DataFrame([data.loc[el] for el in  BND_X], index=range(len( BND_X)))
 
+# Creating production rules for lower, upper and boundry region
 pos_rule = get_pos_rule(pos_dataframe)
 neg_rule = get_neg_rule(not_pos_dataframe)
 maybe_rule = get_maybe_rule(maybe_dataframe)
 
-#to print all the rules we get and the approximation rate
-print(f'1) {pos_rule}')
-print(f'2) {neg_rule}')
-print(f'3) {maybe_rule}')
-print(f'approximation rate is {approximation_rate}')
+print ('\nGetting an elementary subsets of dataset:\n' + f'{elementary}')
+print (lower_init)
+print ('\n' + '======== Production rules for positive region ========')
+print (f'1) {pos_rule}')
+print ('\n' + '======== Production rules for negative region ========')
+print (f'2) {neg_rule}')
+print ('\n' + '======== Production rules for boundry region ========')
+print (f'3) {maybe_rule}')
+print ('\n' + f'Approximation occuracy: {approximation_rate}\n')
