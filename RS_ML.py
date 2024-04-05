@@ -1,14 +1,18 @@
 import pandas as pd
 
-df_path = 'D:\Python projects\RST-RS1-algorithm\golf.csv'
-data = pd.read_csv(df_path)
+# df_path = 'D:\Python projects\RST-RS1-algorithm\golf.csv'
+df_path = 'D:\Python projects\RST-RS1-algorithm\Train_data_golf_14ex.csv'
 
-
-print ('\n' + '[----------------------- DATASET -----------------------]')
-print (data)
+try:
+    data = pd.read_csv(df_path)
+    print ('\n' + '[----------------------- DATASET -----------------------]')
+    print (data)
+    print ('\n' + '[-------------------------------------------------------]')
+except Exception as e:
+    print(e)
 
 X = data [['Outlook', 'Humidity%', 'Wind']] 
-X_true = data[['Outlook', 'Humidity%', 'Wind']][data['Play'] == 1]
+X_true = data[['Outlook', 'Humidity%', 'Wind']][data['Play'] == 'yes']
 
 all_indexes = set(data.index)
 X_true_indexes = set(X_true.index)
@@ -130,4 +134,58 @@ print ('\n' + '======== Production rules for negative region ========')
 print (f'2) {neg_rule}')
 print ('\n' + '======== Production rules for boundry region ========')
 print (f'3) {maybe_rule}')
-print ('\n' + f'Approximation occuracy: {approximation_rate}\n')
+print ('\n' + f'Approximation accuracy: {approximation_rate}\n')
+
+
+
+# =================================================================================
+
+
+
+# df_test_path = 'D:\Python projects\RST-RS1-algorithm\Test_data_golf.csv'
+df_test_path = 'D:\Python projects\RST-RS1-algorithm\Test_data_golf_50ex.csv'
+
+try:
+    data_test = pd.read_csv(df_test_path)
+    print ('\n' + '[----------------------- TRAIN DATASET WITHOUT ATTRIBUTE \'PLAY\' -----------------------]')
+    print (data_test)
+except Exception as e:
+    print(e)
+
+
+# Function for classification test dataset
+def classify_new_data(row, pos_df, maybe_df, neg_df):
+    # Checking if a row contains the conditions for a boundry region (POS)
+    for _, pos_row in pos_df.iterrows():
+        if (row['Outlook'] == pos_row['Outlook'] and
+            row['Humidity%'] == pos_row['Humidity%'] and
+            row['Wind'] == pos_row['Wind']):
+            return 'yes'
+    
+    # Checking if a row contains the conditions for a boundry region (BND)
+    for _, maybe_row in maybe_df.iterrows():
+        if (row['Outlook'] == maybe_row['Outlook'] and
+            row['Humidity%'] == maybe_row['Humidity%'] and
+            row['Wind'] == maybe_row['Wind']):
+            return 'maybe'
+    
+    # Checking if a row contains the conditions for a negative region (NEG)
+    for _, neg_row in neg_df.iterrows():
+        if (row['Outlook'] == neg_row['Outlook'] and
+            row['Humidity%'] == neg_row['Humidity%'] and
+            row['Wind'] == neg_row['Wind']):
+            return 'no'
+    
+    # If row not in conditions POS/NEG/BND then return 'Unknown'
+    return 'Unknown'
+
+# Applying the classification function to the test dataset
+data_test['Classification'] = data_test.apply(classify_new_data, args=(pos_dataframe, maybe_dataframe, not_pos_dataframe,), axis=1)
+
+# Print result of classification train dataset
+print ('\n' + '[----------------------- CLASSIFIED TRAIN DATASET -----------------------]')
+print(data_test)
+
+data_test['Correctly_Classified'] = data_test['Classification'] == data_test['Play']
+accuracy = round(data_test['Correctly_Classified'].mean(), 3) * 100
+print(f'Accuracy of the classification RS1: {accuracy} %')
