@@ -1,0 +1,15 @@
+Outlook,Humidity%,Wind,Play
+Sunny,85,True,no
+Sunny,90,False,no
+Overcast,78,True,yes
+Rainy,96,True,yes
+Rainy,80,True,yes
+Rainy,70,False,no
+Overcast,65,False,yes
+Sunny,95,True,no
+Sunny,70,True,yes
+Rainy,80,True,yes
+Sunny,70,False,yes
+Overcast,90,False,yes
+Overcast,75,True,yes
+Rainy,80,False,no
