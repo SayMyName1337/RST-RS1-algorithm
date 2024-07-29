@@ -1,5 +1,7 @@
 # Rough Set Theory (RST)
 
+Language: ![https://img.shields.io/badge/Python-3.11.2-blue](https://img.shields.io/badge/Python-3.7.5-blue)
+
 ## Project Description
 
 This project implements a machine learning algorithm based on Zdzislaw Pawlak's Rough Set Theory to predict golf performance based on weather conditions.
