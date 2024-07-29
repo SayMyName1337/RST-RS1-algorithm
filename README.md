@@ -109,3 +109,5 @@ The main implemented functions of the algorithm are:
 * **`get_neg_rule(not_pos_dataframe)`**: Создание правила для отрицательных объектов.
 * **`get_maybe_rule(maybe_dataframe)`**: Создание правила для неопределенных объектов.
 * **`classify_new_data(row, pos_df, maybe_df, neg_df)`**: Классификация нового набора данных.
+
+[(Back to top)](#Rough-Set-Theory-(RST))
