@@ -102,10 +102,10 @@ Accuracy of the classification RS1: 42.9 %
 
 # Code Structure
 The main implemented functions of the algorithm are:
-* **`get_elementary_subsets(X)`**: Получение элементарных подмножеств из набора объектов.
-* **`get_lower(elementary, X_true_indexes)`**: Получение нижнего приближения.
-* **`get_upper(elementary, X_true_indexes)`**: Получение верхнего приближения.
-* **`get_pos_rule(pos_dataframe)`**: Создание правила для положительных объектов.
-* **`get_neg_rule(not_pos_dataframe)`**: Создание правила для отрицательных объектов.
-* **`get_maybe_rule(maybe_dataframe)`**: Создание правила для неопределенных объектов.
-* **`classify_new_data(row, pos_df, maybe_df, neg_df)`**: Классификация нового набора данных.
+* **`get_elementary_subsets(X)`**: A function that returns elementary subsets of a set of objects.
+* **`get_lower(elementary, X_true_indexes)`**: Formation of lower approximation.
+* **`get_upper(elementary, X_true_indexes)`**: Formation of upper approximation.
+* **`get_pos_rule(pos_dataframe)`**: Creating production rules for upper approximation.
+* **`get_neg_rule(not_pos_dataframe)`**: Creating production rules for lower approximation.
+* **`get_maybe_rule(maybe_dataframe)`**: Creating production rules for boundry region.
+* **`classify_new_data(row, pos_df, maybe_df, neg_df)`**: Classification of a test data set based on constructed rules.
