@@ -2,7 +2,7 @@
 
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) ![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white) ![Pandas](https://img.shields.io/badge/pandas-%23150458.svg?style=for-the-badge&logo=pandas&logoColor=white)
 
-## Project Description []
+## Project Description
 
 This project implements a machine learning algorithm based on Zdzislaw Pawlak's Rough Set Theory to predict golf performance based on weather conditions.
 
